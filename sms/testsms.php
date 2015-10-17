@@ -1,9 +1,15 @@
 <?php
 //include 'BaiduBce.phar';
 
+$data = '{
+             "templateId":"smsTpl:e7476122a1c24e37b3b0de19d04ae904",
+             "receiver":["18600883371"],
+             "contentVar":"{\"code\":\"123456\"}"
+          }';
+
 date_default_timezone_set('UTC');
 
-$AK = "97659fdf3ab547e2a9f71dfcd6659a8b";
+$AK = "";
         $timestamp = date("Y-m-d")."T".date("H:i:s")."Z";
         //$timestamp = new DateTime();
         //$timestamp->setTimezone(DateUtils::$UTC_TIMEZONE);
@@ -11,7 +17,7 @@ $AK = "97659fdf3ab547e2a9f71dfcd6659a8b";
 
         print $timestamp."\n";
         $expirationPeriodInSeconds = "3600";
-        $SK="6c6be2d67ab642389ac54561cd35360c";
+        $SK="";
        
        // $authStringPrefix = "bce-auth-v1/".$AK."/".$timestamp."/".$expirationPeriodInSeconds;
 
@@ -22,12 +28,12 @@ $AK = "97659fdf3ab547e2a9f71dfcd6659a8b";
         print $SigningKey."\n";
 
         $CanonicalHeaders1 = "host;"."x-bce-date";//
-        $CanonicalHeaders2 = "host:sms.bj.baidubce.com\n"."x-bce-date:".urlencode($timestamp);//
+        $CanonicalHeaders2 = "host:ses.bj.baidubce.com\n"."x-bce-date:".urlencode($timestamp);//
 
         //$CanonicalHeaders2 = "host:bj.bcebos.com\n"."x-bce-date:".urlencode($timestamp);
         $CanonicalString = "";
 
-        $CanonicalURI = "/v1/message"; 
+        $CanonicalURI = "/v1/email"; 
         $CanonicalRequest = "POST\n".$CanonicalURI."\n".$CanonicalString."\n".$CanonicalHeaders2;	//第二步
         print $CanonicalRequest."\n";
 
@@ -39,23 +45,23 @@ $AK = "97659fdf3ab547e2a9f71dfcd6659a8b";
         print $Authorization."\n";
         //$Authorization:
         //bce-auth-v1/97659fdf3ab547e2a9f71dfcd6659a8b2015-08-27T03:50:33Z/3600/content-length;host;x-bce-date;/5290e5669befd7f44dd362e00c2a4cc5edbee0bc925bceb15e8a9fcb91389201
-   //      $url = "http://sms.bj.baidubce.com/v1/message";
-   //      $data['templateId']= "smsTpl:e7476122a1c24e37b3b0de19d04ae901";
-   //      $data['receiver']= "['15221095850']";
-   //      $data['contentVar']= "{\"key1\" : \"val1\", \"key2\" : \"val2\"}";
-   //      $head =  array("Content-type: application/json;charset=utf-8","Authorization:{$Authorization}","x-bce-date:{$timestamp}","x-bce-content-sha256:{$SigningKey}");
+      //   $url = "http://sms.bj.baidubce.com/v1/message";
+      // //   $data['templateId']= "smsTpl:e7476122a1c24e37b3b0de19d04ae904";
+      // //   $data['receiver']= "['18600883371']";
+      // //   $data['contentVar']= "{\"key1\" : \"val1\", \"key2\" : \"val2\"}";
+      //   $head =  array("Content-type: application/json","Authorization:{$Authorization}","x-bce-date:{$timestamp}","x-bce-content-sha256:{$SigningKey}");
      
-   //       $curlp = curl_init();
-		 // curl_setopt($curlp, CURLOPT_URL, $url);
-		 // curl_setopt($curlp, CURLOPT_HTTPHEADER,$head); 
-		 // curl_setopt($curlp, CURLOPT_SSL_VERIFYPEER, FALSE);
-		 // curl_setopt($curlp, CURLOPT_SSL_VERIFYHOST, FALSE);
-		 // if(!empty($data)){
-		 //   curl_setopt($curlp, CURLOPT_POST, 1);
-		 //   curl_setopt($curlp, CURLOPT_POSTFIELDS, $data);
-		 // }
-		 // curl_setopt($curlp, CURLOPT_RETURNTRANSFER, 1);
-		 // $output = curl_exec($curlp);
-		 // curl_close($curlp);
-		 // echo  $output;
+      //   $curlp = curl_init();
+		    // curl_setopt($curlp, CURLOPT_URL, $url);
+		    // curl_setopt($curlp, CURLOPT_HTTPHEADER,$head); 
+		    // curl_setopt($curlp, CURLOPT_SSL_VERIFYPEER, FALSE);
+		    // curl_setopt($curlp, CURLOPT_SSL_VERIFYHOST, FALSE);
+		    // if(!empty($data)){
+		    //   curl_setopt($curlp, CURLOPT_POST, 1);
+		    //   curl_setopt($curlp, CURLOPT_POSTFIELDS, $data);
+		    // }
+		    // curl_setopt($curlp, CURLOPT_RETURNTRANSFER, 1);
+		    // $output = curl_exec($curlp);
+		    // curl_close($curlp);
+		    // echo  $output;
 ?>
