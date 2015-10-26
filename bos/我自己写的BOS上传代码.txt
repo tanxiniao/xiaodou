@@ -90,12 +90,10 @@ namespace UpLoad
 
                // string extension = contentType.ToString();
 
-                //存储路径
                 string canonicalUri = "/v1/zxdtestbae/image_test.jpg";
 
                 string canonicalQueryString = "";
 
-                //content头是应该在canonicalHeaders这里加入的，但是加入就会报错
                 string canonicalHeaders =                                          
                                           "host:bj.bcebos.com" + "\n" +
                                           "x-bce-date:" + time.Replace(":","%3A");
