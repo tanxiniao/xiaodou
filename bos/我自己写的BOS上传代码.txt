@@ -34,21 +34,21 @@ namespace UpLoad
 
         }
 
-        //ÉÏ´«Ë½ÓĞÍ¼Æ¬ÎÄ¼ş
+        //ä¸Šä¼ ç§æœ‰å›¾ç‰‡æ–‡ä»¶
         public async Task<OperationResult> PutOwnPicturesAsync(ContentType contentType,string userName,string fileName, byte[] content)
         {
 
             accessKeyID = "";
-            //ÏµÍ³ÃÜÔ¿
+            //ç³»ç»Ÿå¯†é’¥
             secretKey = "";
-            //ÉÏ´«µØÖ·
+            //ä¸Šä¼ åœ°å€
             url = @"http://bj.bcebos.com";
 
-            //Ç©Ãû¹ıÆÚÊ±¼ä(Ãë)
+            //ç­¾åè¿‡æœŸæ—¶é—´(ç§’)
             int expirationPeriod = 3600;
 
             
-            //·ÃÎÊÒâÍ¼£¬´æ´¢
+            //è®¿é—®æ„å›¾ï¼Œå­˜å‚¨
             string toUpperCase = "PUT";
 
             string bucket = "zxdtestbae";
@@ -60,10 +60,10 @@ namespace UpLoad
 
             
             
-            //Éú³ÉsigningKeyĞèÒªµÄĞÅÏ¢
+            //ç”ŸæˆsigningKeyéœ€è¦çš„ä¿¡æ¯
             string information = string.Format("bce-auth-v1/{0}/{1}/{2}", accessKeyID, time, expirationPeriod);
 
-            //¼ÆËãÃÜÔ¿£¬¼ÆËãsigningKeyÊ±ÓÃµ½µÄinformationÀï²»ĞèÒªÓÃµ½contentÍ·
+            //è®¡ç®—å¯†é’¥ï¼Œè®¡ç®—signingKeyæ—¶ç”¨åˆ°çš„informationé‡Œä¸éœ€è¦ç”¨åˆ°contentå¤´
             string signingKey = Sha256Hex(secretKey, information);
             
             OperationResult operationResult = null;
@@ -105,8 +105,7 @@ namespace UpLoad
                 signature = Sha256Hex(signingKey, canonicalRequest);
 
 
-                //ÈÏÖ¤×Ö·û´®
-                //APIÔÚÕâÀïÃ»ÓĞÃ÷È·ËµÃ÷ÊÇ·ñÒª¼ÓcontentÍ·£¬¼ÓÁË»á±¨´í
+                //è®¤è¯å­—ç¬¦ä¸²
                 attestation = string.Format("bce-auth-v1/",accessKeyID,time,expirationPeriod,host;x-bce-date,signature);
 
 
