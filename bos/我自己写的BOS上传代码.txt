@@ -1,0 +1,158 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
+
+namespace UpLoad
+{
+    public enum ContentType
+    {
+        Text,
+        Jpg,
+        Png,
+        Gif
+    }
+
+    public class Upload
+    {
+        private string signature, accessKeyID, secretKey, url, attestation;
+        private readonly HttpClient _httpClient;
+
+        public Upload()
+        {
+            _httpClient = new HttpClient(new WebRequestHandler())
+                              {
+                                  Timeout = TimeSpan.FromSeconds(60),
+                                  MaxResponseContentBufferSize = 1024*1024*10
+                              };
+
+        }
+
+        //上传私有图片文件
+        public async Task<OperationResult> PutOwnPicturesAsync(ContentType contentType,string userName,string fileName, byte[] content)
+        {
+
+            accessKeyID = "";
+            //系统密钥
+            secretKey = "";
+            //上传地址
+            url = @"http://bj.bcebos.com";
+
+            //签名过期时间(秒)
+            int expirationPeriod = 3600;
+
+            
+            //访问意图，存储
+            string toUpperCase = "PUT";
+
+            string bucket = "zxdtestbae";
+
+            string time = DateTime.UtcNow.ToString("s")+"Z";
+
+            
+            
+
+            
+            
+            //生成signingKey需要的信息
+            string information = string.Format("bce-auth-v1/{0}/{1}/{2}", accessKeyID, time, expirationPeriod);
+
+            //计算密钥，计算signingKey时用到的information里不需要用到content头
+            string signingKey = Sha256Hex(secretKey, information);
+            
+            OperationResult operationResult = null;
+            HttpResponseMessage sendMessage = null;
+            
+                
+                var httpContent = new ByteArrayContent(content);
+                httpContent.Headers.ContentLength = content.Length;
+                switch (contentType)
+                {
+                    case ContentType.Text:
+                        httpContent.Headers.ContentType = new MediaTypeHeaderValue("text/plain");
+                        break;
+                    case ContentType.Jpg:
+                        httpContent.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
+                        break;
+                    case ContentType.Png:
+                        httpContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+                        break;
+                    case ContentType.Gif:
+                        httpContent.Headers.ContentType = new MediaTypeHeaderValue("image/gif");
+                        break;
+                }
+
+               // string extension = contentType.ToString();
+
+                //存储路径
+                string canonicalUri = "/v1/zxdtestbae/image_test.jpg";
+
+                string canonicalQueryString = "";
+
+                //content头是应该在canonicalHeaders这里加入的，但是加入就会报错
+                string canonicalHeaders =                                          
+                                          "host:bj.bcebos.com" + "\n" +
+                                          "x-bce-date:" + time.Replace(":","%3A");
+
+                string canonicalRequest = toUpperCase + "\n" + canonicalUri + "\n" + canonicalQueryString + "\n" +
+                                     canonicalHeaders;
+
+
+                signature = Sha256Hex(signingKey, canonicalRequest);
+
+
+                //认证字符串
+                //API在这里没有明确说明是否要加content头，加了会报错
+                attestation = string.Format("bce-auth-v1/",accessKeyID,time,expirationPeriod,host;x-bce-date,signature);
+
+
+                _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", attestation);
+                _httpClient.DefaultRequestHeaders.Host = url.Substring(7);
+                _httpClient.DefaultRequestHeaders.Add("x-bce-date", time);
+            try
+            {   
+                
+                sendMessage =
+                    await
+                    _httpClient.PutAsync(
+                        url + canonicalUri,
+                        httpContent);
+
+                string resultText = await sendMessage.Content.ReadAsStringAsync();
+                string resultCode =  sendMessage.ReasonPhrase;
+                JObject resultObject = JObject.Parse(resultText);
+
+                string errorCode, errorText = null;
+                errorCode = resultObject.Value<string>("message");
+
+                operationResult = new OperationResult(errorCode);
+
+            }
+            catch (Exception ex)
+            {
+                operationResult = new OperationResult(ex.Message);
+            }
+            return operationResult;
+        }
+
+        private string Sha256Hex(string key, string signatureString)
+        {
+            byte[] keyBuffer = Encoding.UTF8.GetBytes(key);
+            byte[] signatureBuffer = Encoding.UTF8.GetBytes(signatureString);
+
+            var hmacsha256 = new HMACSHA256(keyBuffer);
+
+
+
+            return BitConverter.ToString(hmacsha256.ComputeHash(signatureBuffer)).Replace("-", "").ToLower();
+
+        }
+
+    }
+}
